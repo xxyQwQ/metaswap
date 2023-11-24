@@ -1,0 +1,20 @@
+defaults:
+    - override hydra/hydra_logging: none
+    - override hydra/job_logging: none
+
+training:
+    device: gpu
+    dataset_path: E:/Work/Homework/AI2612/face-swap
+    checkpoint_path: ./checkpoint/training_${now:%Y%m%d%H%M%S}
+    batch_size: 4
+    num_workers: 4
+    learning_rate: 4e-4
+    num_iterations: 500000
+    report_interval: 100
+    save_interval: 10000
+
+hydra:
+    run:
+        dir: ${training.checkpoint_path}
+    sweep:
+        dir: ${training.checkpoint_path}
