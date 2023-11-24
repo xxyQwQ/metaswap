@@ -12,7 +12,7 @@ MetaSwap: Towards Elegant One-Shot Face Swapping Framework
     <br />
 </p>
 
-The framework is designed based on [faceshifter](https://arxiv.org/pdf/1912.13457.pdf) and [simswap](https://arxiv.org/pdf/2106.06340.pdf). The face swapping model mainly supports 224x224 resolution.
+The framework is designed based on [faceshifter](https://arxiv.org/pdf/1912.13457.pdf) and [simswap](https://arxiv.org/pdf/2106.06340.pdf). The face swapping model mainly supports 256x256 resolution.
 
 ## Requirements
 
@@ -62,7 +62,7 @@ To train the model, `vggface2` dataset is recommended. You can download it [here
 
 Then modify the configuration file in the `config` directory, where `dataset_path` must be correctly set as the path to your dataset. You can also modify the hyperparameters or create a new configuration file as you like, but remember to modify the `hydra` arguments in `train.py` accordingly.
 
-Here we provide two template configuration files, where `config/standard.yaml` uses a larger batch size and requires at least 16GB GPU memory, while `config/light.yaml` uses a smaller batch size and requires at least 8GB GPU memory.
+Here we provide two template configuration files, where `config/standard.yaml` uses a larger batch size and requires at least 24GB GPU memory, while `config/light.yaml` uses a smaller batch size and requires at least 12GB GPU memory.
 
 Run the following command to train the model:
 

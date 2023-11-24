@@ -5,12 +5,12 @@ import time
 import hydra
 import numpy as np
 from PIL import Image
+from omegaconf import OmegaConf
 
 import torch
 import torch.nn.functional as F
 from torch.optim import Adam
 from torch.utils.data import DataLoader
-
 
 from facial.model import Backbone
 from utils.logger import Logger
@@ -20,7 +20,7 @@ from model.generator import InjectiveGenerator
 from model.discriminator import MultiscaleDiscriminator
 
 
-@hydra.main(version_base=None, config_path='./config', config_name='light')
+@hydra.main(version_base=None, config_path='./config', config_name='standard')
 def main(config):
     # load configuration
     device = torch.device('cuda') if config.training.device == 'gpu' else torch.device('cpu')
@@ -29,33 +29,30 @@ def main(config):
     batch_size = int(config.training.batch_size)
     num_workers = int(config.training.num_workers)
     learning_rate = float(config.training.learning_rate)
+    weight_adversarial = float(config.training.loss_function.weight_adversarial)
+    weight_attribute = float(config.training.loss_function.weight_attribute)
+    weight_identity = float(config.training.loss_function.weight_identity)
+    weight_reconstruction = float(config.training.loss_function.weight_reconstruction)
     num_iterations = int(config.training.num_iterations)
     report_interval = int(config.training.report_interval)
     save_interval = int(config.training.save_interval)
 
     # create logger
     sys.stdout = Logger(os.path.join(checkpoint_path, 'training.log'))
-
-    # print configuration
-    print('device: {}'.format(device))
-    print('dataset_path: {}'.format(dataset_path))
-    print('checkpoint_path: {}'.format(checkpoint_path))
-    print('batch_size: {}'.format(batch_size))
-    print('num_workers: {}'.format(num_workers))
-    print('learning_rate: {}'.format(learning_rate))
-    print('num_iterations: {}'.format(num_iterations))
-    print('report_interval: {}'.format(report_interval))
-    print('save_interval: {}\n'.format(save_interval))
+    config.training.device = str(device)
+    config.training.dataset_path = dataset_path
+    config.training.checkpoint_path = checkpoint_path
+    print(OmegaConf.to_yaml(config))
 
     # create model
     identity_model = Backbone(50, 0.6, 'ir_se').to(device)
     identity_model.eval()
     identity_model.load_state_dict(torch.load('./facial/weight.pth', map_location=device), strict=False)
 
-    generator_model = InjectiveGenerator(identity_channels=512).to(device)
+    generator_model = InjectiveGenerator().to(device)
     generator_model.train()
 
-    discriminator_model = MultiscaleDiscriminator(num_scales=3).to(device)
+    discriminator_model = MultiscaleDiscriminator().to(device)
     discriminator_model.train()
 
     # create optimizer
@@ -100,7 +97,7 @@ def main(config):
 
             loss_reconstruction = torch.sum(same_identity * 0.5 * torch.mean(torch.square(result_image - target_image).reshape(batch_size, -1), dim=1)) / (torch.sum(same_identity) + 1e-6)
 
-            loss_generator = 1 * loss_adversarial + 5 * loss_attribute + 20 * loss_identity + 5 * loss_reconstruction
+            loss_generator = weight_adversarial * loss_adversarial + weight_identity * loss_identity + weight_attribute * loss_attribute + weight_reconstruction * loss_reconstruction
             loss_generator.backward()
             generator_optimizer.step()
 

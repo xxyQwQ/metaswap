@@ -28,7 +28,7 @@ class FundamentalDiscriminator(nn.Module):
         
         # classify
         block_list.append([
-            nn.Conv2d(num_channels, num_channels, 4, 1, 2),
+            nn.Conv2d(num_channels, num_channels, 4, 1, 1),
             nn.InstanceNorm2d(num_channels),
             nn.LeakyReLU(0.2, inplace=True)
         ])
@@ -39,20 +39,16 @@ class FundamentalDiscriminator(nn.Module):
         self.layer_list = layer_list
     
     def forward(self, input):
-        # (batch_size, 3, 224, 224) -> (batch_size, 512, 7, 7)
-        # (batch_size, 3, 112, 112) -> (batch_size, 512, 7, 7)
-        # (batch_size, 3, 56, 56) -> (batch_size, 512, 7, 7)
         output = self.network(input)
         return output
 
 
 class MultiscaleDiscriminator(nn.Module):
-    def __init__(self, num_scales: int = 3):
+    def __init__(self, num_scales: int = 3, image_size: int = 256):
         super(MultiscaleDiscriminator, self).__init__()
         self.num_scales = num_scales
 
         network_list = []
-        image_size = 224
         for _ in range(self.num_scales):
             network_list.append(FundamentalDiscriminator(image_size))
             image_size = image_size // 2
