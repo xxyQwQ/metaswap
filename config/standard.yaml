@@ -18,6 +18,14 @@ training:
     report_interval: 100
     save_interval: 10000
 
+image_inference:
+    device: gpu
+    generator_path: ./checkpoint/training_20231125142041/iteration_20000/generator.pth
+    source_image_path: ./temp/image/4.jpeg
+    target_image_path: ./temp/image/2.jpg
+    result_image_save_path: ./temp/result/1.jpg
+
+
 hydra:
     run:
         dir: ${training.checkpoint_path}
