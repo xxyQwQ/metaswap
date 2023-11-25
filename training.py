@@ -20,28 +20,27 @@ from model.generator import InjectiveGenerator
 from model.discriminator import MultiscaleDiscriminator
 
 
-@hydra.main(version_base=None, config_path='./config', config_name='standard')
+@hydra.main(version_base=None, config_path='./config', config_name='training')
 def main(config):
     # load configuration
-    device = torch.device('cuda') if config.training.device == 'gpu' else torch.device('cpu')
-    dataset_path = str(config.training.dataset_path)
-    checkpoint_path = str(config.training.checkpoint_path)
-    batch_size = int(config.training.batch_size)
-    num_workers = int(config.training.num_workers)
-    learning_rate = float(config.training.learning_rate)
-    weight_adversarial = float(config.training.loss_function.weight_adversarial)
-    weight_attribute = float(config.training.loss_function.weight_attribute)
-    weight_identity = float(config.training.loss_function.weight_identity)
-    weight_reconstruction = float(config.training.loss_function.weight_reconstruction)
-    num_iterations = int(config.training.num_iterations)
-    report_interval = int(config.training.report_interval)
-    save_interval = int(config.training.save_interval)
+    dataset_path = str(config.parameter.dataset_path)
+    checkpoint_path = str(config.parameter.checkpoint_path)
+    device = torch.device('cuda') if config.parameter.device == 'gpu' else torch.device('cpu')
+    batch_size = int(config.parameter.batch_size)
+    num_workers = int(config.parameter.num_workers)
+    learning_rate = float(config.parameter.learning_rate)
+    weight_adversarial = float(config.parameter.loss_function.weight_adversarial)
+    weight_attribute = float(config.parameter.loss_function.weight_attribute)
+    weight_identity = float(config.parameter.loss_function.weight_identity)
+    weight_reconstruction = float(config.parameter.loss_function.weight_reconstruction)
+    num_iterations = int(config.parameter.num_iterations)
+    report_interval = int(config.parameter.report_interval)
+    save_interval = int(config.parameter.save_interval)
 
     # create logger
     sys.stdout = Logger(os.path.join(checkpoint_path, 'training.log'))
-    config.training.device = str(device)
-    config.training.dataset_path = dataset_path
-    config.training.checkpoint_path = checkpoint_path
+    config.parameter.checkpoint_path = checkpoint_path
+    config.parameter.device = str(device)
     print(OmegaConf.to_yaml(config))
 
     # create model
@@ -62,7 +61,7 @@ def main(config):
     # load dataset
     dataset = FaceDataset(dataset_path)
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers, pin_memory=True, drop_last=True)
-    print('num_images: {}'.format(len(dataset)))
+    print('image number: {}\n'.format(len(dataset)))
 
     # start training
     current_iteration = 0
