@@ -5,7 +5,7 @@ from model.encoder import AttriduteEncoder
 class DenormalizationLayer(nn.Module):
     def __init__(self, input_channels: int, attribute_channels: int, identity_channels: int):
         super(DenormalizationLayer, self).__init__()
-        self.norm = nn.InstanceNorm2d(input_channels)
+        self.norm = nn.BatchNorm2d(input_channels)
 
         self.conv_mu = nn.Conv2d(attribute_channels, input_channels, 1, 1, 0)
         self.conv_sigma = nn.Conv2d(attribute_channels, input_channels, 1, 1, 0)
@@ -40,14 +40,14 @@ class DenormalizationBlock(nn.Module):
         self.relu = nn.ReLU(inplace=True)
 
         self.denorm_1 = DenormalizationLayer(input_channels, attribute_channels, identity_channels)
-        self.conv_1 = nn.Conv2d(input_channels, input_channels, 3, 1, 1, bias=False)
+        self.conv_1 = nn.Conv2d(input_channels, input_channels, 3, 1, 1)
 
         self.denorm_2 = DenormalizationLayer(input_channels, attribute_channels, identity_channels)
-        self.conv_2 = nn.Conv2d(input_channels, output_channels, 3, 1, 1, bias=False)
+        self.conv_2 = nn.Conv2d(input_channels, output_channels, 3, 1, 1)
 
         if self.transform:
             self.denorm_3 = DenormalizationLayer(input_channels, attribute_channels, identity_channels)
-            self.conv_3 = nn.Conv2d(input_channels, output_channels, 3, 1, 1, bias=False)
+            self.conv_3 = nn.Conv2d(input_channels, output_channels, 3, 1, 1)
     
     def forward(self, input, attribute, identity):
         output = self.denorm_1(input, attribute, identity)
@@ -70,25 +70,29 @@ class DenormalizationGenerator(nn.Module):
         self.num_blocks = 8
 
         self.boot = nn.ConvTranspose2d(identity_channels, 1024, 2, 1, 0)
-        self.upsample = nn.UpsamplingBilinear2d(scale_factor=2)
         self.tanh = nn.Tanh()
 
         input_channels = [1024, 1024, 1024, 1024, 512, 256, 128, 64]
         output_channels = [1024, 1024, 1024, 512, 256, 128, 64, 3]
         attribute_channels = [1024, 2048, 1024, 512, 256, 128, 64, 64]
+        upsample_targets = [4, 8, 14, 28, 56, 112, 224]
 
         denorm_list = []
+        upsample_list = []
         for i in range(self.num_blocks):
             denorm_list.append(DenormalizationBlock(input_channels[i], output_channels[i], attribute_channels[i], identity_channels))
+            if i < self.num_blocks - 1:
+                upsample_list.append(nn.UpsamplingBilinear2d(size=upsample_targets[i]))
         self.denorm = nn.ModuleList(denorm_list)
-    
+        self.upsample = nn.ModuleList(upsample_list)
+
     def forward(self, attribute, identity):
         target_shape = (identity.shape[0], identity.shape[1], 1, 1)
         output = self.boot(identity.reshape(target_shape))
         for i in range(self.num_blocks):
             output = self.denorm[i](output, attribute[i], identity)
             if i < self.num_blocks - 1:
-                output = self.upsample(output)
+                output = self.upsample[i](output)
         output = self.tanh(output)
         return output
 

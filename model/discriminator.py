@@ -44,7 +44,7 @@ class FundamentalDiscriminator(nn.Module):
 
 
 class MultiscaleDiscriminator(nn.Module):
-    def __init__(self, num_scales: int = 3, image_size: int = 256):
+    def __init__(self, num_scales: int = 3, image_size: int = 224):
         super(MultiscaleDiscriminator, self).__init__()
         self.num_scales = num_scales
 
