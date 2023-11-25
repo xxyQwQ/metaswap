@@ -60,16 +60,30 @@ gdown 15nZSJ2bAT3m-iCBqP3N_9gld5_EGv4kp -O facial/weight.pth
 
 To train the model, `vggface2` dataset is recommended. You can download it [here](https://drive.google.com/file/d/1CPSeum3HpopfomUEK1gybeuIVoeJT_Eo/view). The directory should contain multiple subdirectories, each of which contains face images with the same identity.
 
-Then modify the configuration file in the `config` directory, where `dataset_path` must be correctly set as the path to your dataset. You can also modify the hyperparameters or create a new configuration file as you like, but remember to modify the `hydra` arguments in `train.py` accordingly.
+Then modify the configuration file in the `config` directory, where `dataset_path` must be correctly set as the path to your dataset. You can also modify the hyperparameters or create a new configuration file as you like, but remember to modify the `hydra` arguments in `training.py` accordingly.
 
-Here we provide two template configuration files, where `config/standard.yaml` uses a larger batch size and requires at least 24GB GPU memory, while `config/light.yaml` uses a smaller batch size and requires at least 12GB GPU memory.
+Here we provide a template configuration file `config/training.yaml`. The batch size is set to 16 by default, which requires at least 16GB GPU memory. Feel free to reduce the batch size if you do not have enough GPU memory.
 
 Run the following command to train the model:
 
 ```bash
-python train.py
+python training.py
 ```
 
 ## Inference
 
-TODO
+The template configuration file `config/inference.yaml` contains necessary arguments for inference. You should correctly set `model_path` as the path to your generator model. Then `source_image_path` and `target_image_path` should be the paths to your source image and target image respectively. The output image will be saved in the `checkpoint` directory by default, but you can specify it as you like.
+
+You can download the pretrained model [here](https://github.com/xxyQwQ/metaswap), but training the model by yourself provides better customization.
+
+Run the following command to perform inference:
+
+```bash
+python inference.py
+```
+
+Since `hydra` allows you to override the arguments in the configuration file in the command line, you can also run the following command as an alternative:
+
+```bash
+python inference.py parameter.source_image_path=sample/image_1.jpg parameter.target_image_path=sample/image_2.jpg
+```

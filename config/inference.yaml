@@ -1,0 +1,16 @@
+defaults:
+    - override hydra/hydra_logging: none
+    - override hydra/job_logging: none
+
+parameter:
+    model_path: /home/xuexiangyuan/work/metaswap/checkpoint/training_20231125142041/iteration_70000/generator.pth
+    source_image_path: ./sample/image_1.jpg
+    target_image_path: ./sample/image_2.jpg
+    checkpoint_path: ./checkpoint/inference_${now:%Y%m%d%H%M%S}
+    device: gpu
+
+hydra:
+    run:
+        dir: ${parameter.checkpoint_path}
+    sweep:
+        dir: ${parameter.checkpoint_path}

@@ -9,7 +9,7 @@ import cv2
 # from scipy.linalg import lstsq
 # from scipy.ndimage import geometric_transform  # , map_coordinates
 
-from mtcnn_pytorch.src.matlab_cp2tform import get_similarity_transform_for_cv2
+from facial.source.matlab_cp2tform import get_similarity_transform_for_cv2
 
 # reference facial points, a list of coordinates (x,y)
 REFERENCE_FACIAL_POINTS = [
@@ -286,10 +286,10 @@ def warp_and_crop_face(src_img,
         raise FaceWarpException(
             'facial_pts and reference_pts must have the same shape')
 
-    if align_type is 'cv2_affine':
+    if align_type == 'cv2_affine':
         tfm = cv2.getAffineTransform(src_pts[0:3], ref_pts[0:3])
 #        #print(('cv2.getAffineTransform() returns tfm=\n' + str(tfm))
-    elif align_type is 'affine':
+    elif align_type == 'affine':
         tfm = get_affine_transform_matrix(src_pts, ref_pts)
 #        #print(('get_affine_transform_matrix() returns tfm=\n' + str(tfm))
     else:
