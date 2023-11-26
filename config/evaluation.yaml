@@ -1,0 +1,14 @@
+defaults:
+    - override hydra/hydra_logging: none
+    - override hydra/job_logging: none
+
+parameter:
+  oringin_evaluation_dataset_path: ./eval_dataset/origin
+  device: gpu
+  checkpoint_path: ./checkpoint/evaluation_${now:%Y%m%d%H%M%S}
+
+hydra:
+    run:
+        dir: ${parameter.checkpoint_path}
+    sweep:
+        dir: ${parameter.checkpoint_path}
