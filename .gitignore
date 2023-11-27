@@ -1,7 +1,7 @@
 .idea/
 .vscode/
-facial/weight.pth
-temp/
+facial/arcface.pth
+facial/hopenet.pth
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -9,10 +9,10 @@ from omegaconf import OmegaConf
 
 import torch
 import torch.nn.functional as F
-import torchvision.transforms as transforms
+from torchvision import transforms
 
 from facial.mtcnn import MTCNN
-from facial.model import Backbone
+from facial.arcface import Backbone
 from utils.logger import Logger
 from model.generator import InjectiveGenerator
 
@@ -37,7 +37,7 @@ def main(config):
 
     identity_model = Backbone(50, 0.6, 'ir_se').to(device)
     identity_model.eval()
-    identity_model.load_state_dict(torch.load('./facial/weight.pth', map_location=device), strict=False)
+    identity_model.load_state_dict(torch.load('./facial/arcface.pth', map_location=device), strict=False)
 
     generator_model = InjectiveGenerator().to(device)
     generator_model.eval()
@@ -64,7 +64,7 @@ def main(config):
 
     # start inference
     with torch.no_grad():
-        source_identity = identity_model(F.interpolate(source_image_aligned, (112, 112), mode='bilinear', align_corners=True))
+        source_identity = identity_model(F.interpolate(source_image_aligned, 112, mode='bilinear', align_corners=True))
         result_image_aligned, _ = generator_model(target_image_aligned, source_identity)
         result_image_aligned = (0.5 * result_image_aligned + 0.5).squeeze(0).detach().cpu().numpy().transpose([1, 2, 0])[:, :, ::-1]
 
@@ -84,7 +84,7 @@ def main(config):
     cv2.imwrite(os.path.join(checkpoint_path, 'source.jpg'), source_image)
     cv2.imwrite(os.path.join(checkpoint_path, 'target.jpg'), target_image)
     cv2.imwrite(os.path.join(checkpoint_path, 'result.jpg'), result_image)
-    print('save inference result in: {}'.format(checkpoint_path))
+    print('save inference result in: {}\n'.format(checkpoint_path))
 
 
 if __name__ == '__main__':

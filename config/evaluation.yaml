@@ -3,9 +3,12 @@ defaults:
     - override hydra/job_logging: none
 
 parameter:
-  oringin_evaluation_dataset_path: ./eval_dataset/origin
-  device: gpu
-  checkpoint_path: ./checkpoint/evaluation_${now:%Y%m%d%H%M%S}
+    model_path: /home/xuexiangyuan/work/metaswap/checkpoint/training_20231125142203/iteration_400000/generator.pth
+    dataset_path: /home/xuexiangyuan/data/face-eval
+    checkpoint_path: ./checkpoint/evaluation_${now:%Y%m%d%H%M%S}
+    device: gpu
+    evaluate_identity: True
+    evaluate_posture: True
 
 hydra:
     run:

@@ -32,20 +32,20 @@ class FaceDataset(TensorDataset):
 
     def __getitem__(self, index):
         identity, serial = self.remap[index]
-        X_s = Image.open(self.dataset[identity][serial])
+        source_image = Image.open(self.dataset[identity][serial])
 
         if np.random.rand() > self.same_prob:
             index = np.random.randint(len(self.remap))
             identity, serial = self.remap[index]
-            X_t = Image.open(self.dataset[identity][serial])
-            same = False
+            target_image = Image.open(self.dataset[identity][serial])
+            same_identity = False
         else:
-            X_t = X_s.copy()
-            same = True
+            target_image = source_image.copy()
+            same_identity = True
         
-        X_s = self.transforms(X_s)
-        X_t = self.transforms(X_t)
-        return X_s, X_t, same
+        source_image = self.transforms(source_image)
+        target_image = self.transforms(target_image)
+        return source_image, target_image, same_identity
 
     def __len__(self):
         return len(self.remap)
