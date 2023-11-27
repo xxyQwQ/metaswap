@@ -12,7 +12,7 @@ import torch.nn.functional as F
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 
-from facial.model import Backbone
+from facial.arcface import Backbone
 from utils.logger import Logger
 from utils.dataset import FaceDataset
 from utils.function import hinge_loss, plot_sample
@@ -46,7 +46,7 @@ def main(config):
     # create model
     identity_model = Backbone(50, 0.6, 'ir_se').to(device)
     identity_model.eval()
-    identity_model.load_state_dict(torch.load('./facial/weight.pth', map_location=device), strict=False)
+    identity_model.load_state_dict(torch.load('./facial/arcface.pth', map_location=device), strict=False)
 
     generator_model = InjectiveGenerator().to(device)
     generator_model.train()

@@ -49,11 +49,11 @@ Latest version is recommended for all the packages, but make sure that your CUDA
 
 ## Preparation
 
-In this project, [insightface](https://github.com/TreB1eN/InsightFace_Pytorch) is required for face detection and alignment. Relevant files are already included in the `facial` directory. You should download the pretrained weights [here](https://drive.google.com/open?id=15nZSJ2bAT3m-iCBqP3N_9gld5_EGv4kp) and save it as `facial/weight.pth`.
+In this project, [arcface](https://github.com/TreB1eN/InsightFace_Pytorch) is required for face detection and alignment. Relevant files are already included in the `facial` directory. You should download the pretrained weights [here](https://drive.google.com/file/d/15nZSJ2bAT3m-iCBqP3N_9gld5_EGv4kp/view) and save it as `facial/arcface.pth`.
 
 If you have installed `gdown`, this step can be done by running the following command:
 ```bash
-gdown 15nZSJ2bAT3m-iCBqP3N_9gld5_EGv4kp -O facial/weight.pth
+gdown 15nZSJ2bAT3m-iCBqP3N_9gld5_EGv4kp -O facial/arcface.pth
 ```
 
 ## Training
@@ -86,4 +86,27 @@ Since `hydra` allows you to override the arguments in the configuration file in 
 
 ```bash
 python inference.py parameter.source_image_path=sample/image_1.jpg parameter.target_image_path=sample/image_2.jpg
+```
+
+## Evaluation
+
+We apply *ID-Retrieval* and *Posture* as the evaluation metrics, which require [arcface](https://github.com/TreB1eN/InsightFace_Pytorch) and [hopenet](https://github.com/natanielruiz/deep-head-pose) respectively. Since `arcface` is already prepared in the former step, you just need to download the pretrained weights for `hopenet` [here](https://drive.google.com/file/d/1m25PrSE7g9D2q2XJVMR6IA7RaCvWSzCR/view) and save it as `facial/hopenet.pth`.
+
+If you have installed `gdown`, this step can be done by running the following command:
+```bash
+gdown 1m25PrSE7g9D2q2XJVMR6IA7RaCvWSzCR -O facial/hopenet.pth
+```
+
+The template configuration file `config/evaluation.yaml` contains necessary arguments for evaluation. You should correctly set `model_path` as the path to your generator model and `dataset_path` as the path to your evaluation dataset. The evaluation dataset should directly contain multiple images with different identities. The metrics and temporary files will be saved in the `checkpoint` directory by default, but you can specify it as you like.
+
+Run the following command to perform evaluation:
+
+```bash
+python evaluation.py
+```
+
+You can also specify which metrics to use by running the following command:
+
+```bash
+python evaluation.py parameter.evaluate_identity=True parameter.evaluate_posture=True
 ```

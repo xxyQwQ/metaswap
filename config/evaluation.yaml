@@ -4,10 +4,11 @@ defaults:
 
 parameter:
     model_path: /home/xuexiangyuan/work/metaswap/checkpoint/training_20231125142203/iteration_400000/generator.pth
-    source_image_path: ./sample/image_1.jpg
-    target_image_path: ./sample/image_2.jpg
-    checkpoint_path: ./checkpoint/inference_${now:%Y%m%d%H%M%S}
+    dataset_path: /home/xuexiangyuan/data/face-eval
+    checkpoint_path: ./checkpoint/evaluation_${now:%Y%m%d%H%M%S}
     device: gpu
+    evaluate_identity: True
+    evaluate_posture: True
 
 hydra:
     run:
