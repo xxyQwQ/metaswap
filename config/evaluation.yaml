@@ -7,8 +7,10 @@ parameter:
     dataset_path: /home/xuexiangyuan/data/face-eval
     checkpoint_path: ./checkpoint/evaluation_${now:%Y%m%d%H%M%S}
     device: gpu
+    perform_inference: True
     evaluate_identity: True
     evaluate_posture: True
+    temporary_path: none
 
 hydra:
     run:

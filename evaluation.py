@@ -1,6 +1,7 @@
 import os
 import sys
 import glob
+from shutil import copytree
 
 import hydra
 import numpy as np
@@ -78,17 +79,19 @@ def compute_identity(dataset_path, source_path, device):
     real_identity, fake_identity, fake_label = [], [], []
 
     real_list = glob.glob('{}/*.*g'.format(dataset_path))
-    for label, real_file in enumerate(real_list):
+    for label, real_file in enumerate(tqdm(real_list, desc='computing identity')):
         real_name, _ = os.path.splitext(os.path.basename(real_file))
 
         real_image = load_image(device, real_list[label])
-        identity = identity_model(F.interpolate(real_image, 112, mode='bilinear', align_corners=True))
+        with torch.no_grad():
+            identity = identity_model(F.interpolate(real_image, 112, mode='bilinear', align_corners=True))
         real_identity.append(identity)
 
         fake_list = glob.glob('{}/{}/*.*g'.format(source_path, real_name))
         for fake_file in fake_list:
             fake_image = load_image(device, fake_file)
-            identity = identity_model(F.interpolate(fake_image, 112, mode='bilinear', align_corners=True))
+            with torch.no_grad():
+                identity = identity_model(F.interpolate(fake_image, 112, mode='bilinear', align_corners=True))
             fake_identity.append(identity)
 
             fake_label.append(label)
@@ -111,11 +114,12 @@ def compute_posture(dataset_path, target_path, device):
     posture_loss = []
 
     real_list = glob.glob('{}/*.*g'.format(dataset_path))
-    for real_file in real_list:
+    for real_file in tqdm(real_list, desc='computing posture'):
         real_name, _ = os.path.splitext(os.path.basename(real_file))
 
         real_image = load_image(device, real_file)
-        yaw, pitch, roll = model(real_image)
+        with torch.no_grad():
+            yaw, pitch, roll = model(real_image)
         yaw, pitch, roll = torch.softmax(yaw, 1), torch.softmax(pitch, 1), torch.softmax(roll, 1)
 
         real_yaw = 3 * torch.sum(index * yaw, 1) - 99
@@ -125,7 +129,8 @@ def compute_posture(dataset_path, target_path, device):
         fake_list = glob.glob('{}/{}/*.*g'.format(target_path, real_name))
         for fake_file in fake_list:
             fake_image = load_image(device, fake_file)
-            yaw, pitch, roll = model(fake_image)
+            with torch.no_grad():
+                yaw, pitch, roll = model(fake_image)
             yaw, pitch, roll = torch.softmax(yaw, 1), torch.softmax(pitch, 1), torch.softmax(roll, 1)
 
             fake_yaw = 3 * torch.sum(index * yaw, 1) - 99
@@ -144,8 +149,10 @@ def main(config):
     dataset_path = str(config.parameter.dataset_path)
     checkpoint_path = str(config.parameter.checkpoint_path)
     device = torch.device('cuda') if config.parameter.device == 'gpu' else torch.device('cpu')
+    perform_inference = bool(config.parameter.perform_inference)
     evaluate_identity = bool(config.parameter.evaluate_identity)
     evaluate_posture = bool(config.parameter.evaluate_posture)
+    temporary_path = str(config.parameter.temporary_path)
 
     # create logger
     sys.stdout = Logger(os.path.join(checkpoint_path, 'evaluation.log'))
@@ -154,7 +161,13 @@ def main(config):
     print(OmegaConf.to_yaml(config))
 
     # generate result
-    source_path, target_path = generate_result(model_path, dataset_path, checkpoint_path, device)
+    if perform_inference:
+        source_path, target_path = generate_result(model_path, dataset_path, checkpoint_path, device)
+        print('generate temporary result in: {}\n'.format(checkpoint_path))
+    else:
+        source_path = os.path.join(temporary_path, 'source_index')
+        target_path = os.path.join(temporary_path, 'target_index')
+        print('load temporary result from: {}\n'.format(checkpoint_path))
 
     # start evaluation
     if evaluate_identity:
