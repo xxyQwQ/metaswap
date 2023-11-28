@@ -3,10 +3,13 @@ defaults:
     - override hydra/job_logging: none
 
 parameter:
+    inference_type: video
     model_path: /home/xuexiangyuan/work/metaswap/checkpoint/training_20231125142203/iteration_400000/generator.pth
     source_image_path: ./sample/image_1.jpg
     target_image_path: ./sample/image_2.jpg
+    target_video_path: ./sample/video_1.mp4
     checkpoint_path: ./checkpoint/inference_${now:%Y%m%d%H%M%S}
+    video_fps: 28
     device: gpu
 
 hydra:
