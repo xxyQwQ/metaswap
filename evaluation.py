@@ -1,7 +1,6 @@
 import os
 import sys
 import glob
-from shutil import copytree
 
 import hydra
 import numpy as np
@@ -29,7 +28,7 @@ def load_image(device, image_path):
     return transform(Image.open(image_path)).unsqueeze(0).to(device)
 
 
-def single_inference(device, identity_model, generator_model, source_file, target_file):    
+def swap_face(device, identity_model, generator_model, source_file, target_file):    
     source_image = load_image(device, source_file)
     target_image = load_image(device, target_file)
 
@@ -41,7 +40,7 @@ def single_inference(device, identity_model, generator_model, source_file, targe
     return result_image
 
 
-def generate_result(model_path, dataset_path, chekpoint_path, device):
+def generate_result(device, model_path, dataset_path, chekpoint_path):
     source_path = os.path.join(chekpoint_path, 'source_index')
     os.makedirs(source_path)
     target_path = os.path.join(chekpoint_path, 'target_index')
@@ -64,14 +63,14 @@ def generate_result(model_path, dataset_path, chekpoint_path, device):
             target_name, _ = os.path.splitext(os.path.basename(target_file))
             target_folder = os.path.join(target_path, target_name)
             os.makedirs(target_folder, exist_ok=True)
-            result_image = single_inference(device, identity_model, generator_model, source_file, target_file)
+            result_image = swap_face(device, identity_model, generator_model, source_file, target_file)
             Image.fromarray((255 * result_image).astype(np.uint8)).save(os.path.join(source_folder, '{}_{}.jpg'.format(source_name, target_name)))
             Image.fromarray((255 * result_image).astype(np.uint8)).save(os.path.join(target_folder, '{}_{}.jpg'.format(source_name, target_name)))
 
     return source_path, target_path
 
 
-def compute_identity(dataset_path, source_path, device):
+def compute_identity(device, dataset_path, source_path):
     identity_model = Backbone(50, 0.6, 'ir_se').to(device)
     identity_model.eval()
     identity_model.load_state_dict(torch.load('./facial/arcface.pth', map_location=device), strict=False)
@@ -105,7 +104,7 @@ def compute_identity(dataset_path, source_path, device):
     return (fake_prediction == fake_label).float().mean().item()
 
 
-def compute_posture(dataset_path, target_path, device):
+def compute_posture(device, dataset_path, target_path):
     model = Hopenet(Bottleneck, [3, 4, 6, 3], 66).to(device)
     model.eval()
     model.load_state_dict(torch.load('./facial/hopenet.pth', map_location=device), strict=False)
@@ -162,7 +161,7 @@ def main(config):
 
     # generate result
     if perform_inference:
-        source_path, target_path = generate_result(model_path, dataset_path, checkpoint_path, device)
+        source_path, target_path = generate_result(device, model_path, dataset_path, checkpoint_path)
         print('generate temporary result in: {}\n'.format(checkpoint_path))
     else:
         source_path = os.path.join(temporary_path, 'source_index')
@@ -171,10 +170,10 @@ def main(config):
 
     # start evaluation
     if evaluate_identity:
-        id_retrieval = compute_identity(dataset_path, source_path, device)
+        id_retrieval = compute_identity(device, dataset_path, source_path,)
         print('id-retrieval: {:.2%}\n'.format(id_retrieval))
     if evaluate_posture:
-        posture = compute_posture(dataset_path, target_path, device)
+        posture = compute_posture(device, dataset_path, target_path)
         print('posture: {:.2f}\n'.format(posture))
     print('save evaluation result in: {}\n'.format(checkpoint_path))
 
