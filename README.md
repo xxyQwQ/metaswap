@@ -72,7 +72,9 @@ python training.py
 
 ## Inference
 
-The template configuration file `config/inference.yaml` contains necessary arguments for inference. You should correctly set `model_path` as the path to your generator model. Then `source_image_path` and `target_image_path` should be the paths to your source image and target image respectively. The output image will be saved in the `checkpoint` directory by default, but you can specify it as you like.
+We support inference on both images and videos, where videos are processed frame by frame.
+
+The template configuration file `config/inference.yaml` contains necessary arguments for inference. You should correctly set `model_path` as the path to your generator model. Then `source_path` should be the path to your source image which provides the identity, and `target_path` refers to your target image or video. In addition, you should specify `file_type` as either `image` or `video`. The result and temporary files will be saved in the `checkpoint` directory by default, but you can specify it as you like.
 
 You can download the pretrained model [here](https://github.com/xxyQwQ/metaswap), but training the model by yourself provides better customization.
 
@@ -82,10 +84,16 @@ Run the following command to perform inference:
 python inference.py
 ```
 
-Since `hydra` allows you to override the arguments in the configuration file in the command line, you can also run the following command as an alternative:
+Since `hydra` allows you to override the arguments in the configuration file in the command line, you can run the following command for image inference:
 
 ```bash
-python inference.py parameter.source_image_path=sample/image_1.jpg parameter.target_image_path=sample/image_2.jpg
+python inference.py parameter.source_path=sample/image_1.jpg parameter.target_path=sample/image_2.jpg parameter.file_type=image
+```
+
+Similarly, you can run the following command for video inference:
+
+```bash
+python inference.py parameter.source_path=sample/image_1.jpg parameter.target_path=sample/video_1.mp4 parameter.file_type=video
 ```
 
 ## Evaluation
