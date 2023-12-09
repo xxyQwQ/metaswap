@@ -3,7 +3,7 @@ defaults:
     - override hydra/job_logging: none
 
 parameter:
-    model_path: /home/xuexiangyuan/metaswap/checkpoint/training_20231128004137/iteration_500000/generator.pth
+    model_path: /home/xuexiangyuan/metaswap/checkpoint/training_20231130123619/iteration_500000/generator.pth
     dataset_path: /home/xuexiangyuan/data/face-eval
     checkpoint_path: ./checkpoint/evaluation_${now:%Y%m%d%H%M%S}
     device: gpu

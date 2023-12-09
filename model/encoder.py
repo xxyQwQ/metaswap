@@ -32,9 +32,9 @@ class UpsampleBlock(nn.Module):
         return output
 
 
-class AttriduteEncoder(nn.Module):
+class AttributeEncoder(nn.Module):
     def __init__(self):
-        super(AttriduteEncoder, self).__init__()
+        super(AttributeEncoder, self).__init__()
 
         self.downsample_1 = DownsampleBlock(3, 32, 4, 2, 1)
         self.downsample_2 = DownsampleBlock(32, 64, 4, 2, 1)

@@ -1,7 +1,9 @@
 import glob
+
 import numpy as np
-from PIL import Image
 from tqdm import tqdm
+from PIL import Image
+
 from torch.utils.data import TensorDataset
 from torchvision import transforms
 
@@ -9,19 +11,17 @@ from torchvision import transforms
 class FaceDataset(TensorDataset):
     def __init__(self, data_root, same_prob=0.2):
         self.dataset = []
-        self.count = []
         path_list = glob.glob('{}/*'.format(data_root))
 
         for path in tqdm(path_list, desc='loading dataset'):
             file_list = glob.glob('{}/*.*g'.format(path))
             self.dataset.append(file_list)
-            self.count.append(len(file_list))
-        
+
         self.remap = []
         for identity in range(len(self.dataset)):
             for serial in range(len(self.dataset[identity])):
                 self.remap.append((identity, serial))
-        
+
         self.same_prob = same_prob
         self.transforms = transforms.Compose([
             transforms.Resize((224, 224)),
@@ -42,7 +42,7 @@ class FaceDataset(TensorDataset):
         else:
             target_image = source_image.copy()
             same_identity = True
-        
+
         source_image = self.transforms(source_image)
         target_image = self.transforms(target_image)
         return source_image, target_image, same_identity

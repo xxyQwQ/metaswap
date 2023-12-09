@@ -84,7 +84,7 @@ def main(config):
             prediction_result = discriminator_model(result_image)
             loss_adversarial = 0
             for prediction in prediction_result:
-                loss_adversarial += hinge_loss(prediction, True)
+                loss_adversarial += hinge_loss(prediction, positive=True)
 
             result_identity = identity_model(F.interpolate(result_image, 112, mode='bilinear', align_corners=True))
             loss_identity = (1 - torch.cosine_similarity(source_identity, result_identity, dim=1)).mean()
@@ -102,15 +102,16 @@ def main(config):
 
             # discriminator
             discriminator_optimizer.zero_grad()
+
             prediction_fake = discriminator_model(result_image.detach())
             loss_fake = 0
             for prediction in prediction_fake:
-                loss_fake += hinge_loss(prediction, False)
+                loss_fake += hinge_loss(prediction, positive=False)
 
             prediction_real = discriminator_model(source_image)
             loss_true = 0
             for prediction in prediction_real:
-                loss_true += hinge_loss(prediction, True)
+                loss_true += hinge_loss(prediction, positive=True)
 
             loss_discriminator = 0.5 * (loss_true + loss_fake)
             loss_discriminator.backward()

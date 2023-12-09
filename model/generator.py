@@ -1,5 +1,5 @@
 from torch import nn
-from model.encoder import AttriduteEncoder
+from model.encoder import AttributeEncoder
 
 
 class DenormalizationLayer(nn.Module):
@@ -100,7 +100,7 @@ class DenormalizationGenerator(nn.Module):
 class InjectiveGenerator(nn.Module):
     def __init__(self, identity_channels: int = 512):
         super(InjectiveGenerator, self).__init__()
-        self.encoder = AttriduteEncoder()
+        self.encoder = AttributeEncoder()
         self.generator = DenormalizationGenerator(identity_channels)
     
     def forward(self, input, identity):
