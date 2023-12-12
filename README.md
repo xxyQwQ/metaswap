@@ -14,6 +14,17 @@ MetaSwap: Towards Elegant One-Shot Face Swapping Framework
 
 The framework is designed based on [faceshifter](https://arxiv.org/pdf/1912.13457.pdf) and [simswap](https://arxiv.org/pdf/2106.06340.pdf). The face swapping model mainly supports 224x224 resolution.
 
+
+## Image Results by Metaswap
+<img src="https://github.com/xxyQwQ/metaswap/blob/main/sample/demo.jpg" width="400">
+
+
+## Video Results by Metaswap
+Here we show a short gift instead of the actual videos.
+
+<img src="https://github.com/xxyQwQ/metaswap/blob/main/sample/demo.gif" width="400">
+
+
 ## Requirements
 
 To ensure the code runs correctly, following packages are required:
