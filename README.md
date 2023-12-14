@@ -80,7 +80,7 @@ We support inference on both images and videos, where videos are processed frame
 
 The template configuration file `config/inference.yaml` contains necessary arguments for inference. You should correctly set `model_path` as the path to your generator model. Then `source_path` should be the path to your source image which provides the identity, and `target_path` refers to your target image or video. In addition, you should specify `file_type` as either `image` or `video`. The result and temporary files will be saved in the `checkpoint` directory by default, but you can specify it as you like.
 
-You can download the pretrained model [here](https://github.com/xxyQwQ/metaswap), but training the model by yourself provides better customization.
+You can download the pretrained model [here](https://pan.baidu.com/s/1GFcsw2bZ95aqfCuMh-WYEg?pwd=1024), but training the model by yourself provides better customization.
 
 Run the following command to perform inference:
 
