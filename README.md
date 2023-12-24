@@ -4,11 +4,11 @@ MetaSwap: Towards Elegant One-Shot Face Swapping Framework
 <p align="center">
     Project of AI2612 Machine Learning Project, 2023 Fall, SJTU
     <br />
-    <a href="https://github.com/Ark-ike"><strong>Yi Ai</strong></a>
-    &nbsp;
     <a href="https://github.com/xxyQwQ"><strong>Xiangyuan Xue</strong></a>
     &nbsp;
     <a href="https://github.com/YsmmsY"><strong>Shengmin Yang</strong></a>
+    &nbsp;
+    <a href="https://github.com/Ark-ike"><strong>Yi Ai</strong></a>
     <br />
 </p>
 
