@@ -17,6 +17,8 @@ parameter:
     num_iterations: 500000
     report_interval: 100
     save_interval: 10000
+    finetune: False
+    model_path: none
 
 hydra:
     run:

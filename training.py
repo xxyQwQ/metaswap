@@ -25,6 +25,7 @@ def main(config):
     # load configuration
     dataset_path = str(config.parameter.dataset_path)
     checkpoint_path = str(config.parameter.checkpoint_path)
+    model_path = str(config.parameter.model_path) if config.parameter.finetune else None
     device = torch.device('cuda') if config.parameter.device == 'gpu' else torch.device('cpu')
     batch_size = int(config.parameter.batch_size)
     num_workers = int(config.parameter.num_workers)
@@ -53,6 +54,10 @@ def main(config):
 
     discriminator_model = MultiscaleDiscriminator().to(device)
     discriminator_model.train()
+
+    if model_path is not None:
+        generator_model.load_state_dict(torch.load(os.path.join(model_path, 'generator.pth'), map_location=device), strict=False)
+        discriminator_model.load_state_dict(torch.load(os.path.join(model_path, 'discriminator.pth'), map_location=device), strict=False)
 
     # create optimizer
     generator_optimizer = Adam(generator_model.parameters(), lr=learning_rate, betas=(0, 0.999), weight_decay=1e-4)
@@ -127,7 +132,7 @@ def main(config):
                 print('time: {:.6f} seconds per iteration'.format(iteration_time))
                 print('discriminator loss: {:.6f}, generator loss: {:.6f}'.format(loss_discriminator.item(), loss_generator.item()))
                 print('adversarial loss: {:.6f}, identity loss: {:.6f}, attribute loss: {:.6f}, reconstruction loss: {:.6f}\n'.format(loss_adversarial.item(), loss_identity.item(), loss_attribute.item(), loss_reconstruction.item()))
-            
+
             # save
             if current_iteration % save_interval == 0:
                 save_path = os.path.join(checkpoint_path, 'iteration_{}'.format(current_iteration))
@@ -145,7 +150,7 @@ def main(config):
                 print('save sample image in: {}'.format(image_path))
                 print('save generator model in: {}'.format(generator_path))
                 print('save discriminator model in: {}\n'.format(discriminator_path))
-            
+
             if current_iteration >= num_iterations:
                 break
 

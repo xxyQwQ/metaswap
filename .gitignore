@@ -2,6 +2,7 @@
 .vscode/
 facial/arcface.pth
 facial/hopenet.pth
+appendix/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
