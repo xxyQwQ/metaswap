@@ -40,10 +40,10 @@ def swap_face(device, identity_model, generator_model, source_file, target_file)
     return result_image
 
 
-def generate_result(device, model_path, dataset_path, chekpoint_path):
-    source_path = os.path.join(chekpoint_path, 'source_index')
+def generate_result(device, model_path, dataset_path, checkpoint_path):
+    source_path = os.path.join(checkpoint_path, 'source_index')
     os.makedirs(source_path)
-    target_path = os.path.join(chekpoint_path, 'target_index')
+    target_path = os.path.join(checkpoint_path, 'target_index')
     os.makedirs(target_path)
 
     identity_model = Backbone(50, 0.6, 'ir_se').to(device)
