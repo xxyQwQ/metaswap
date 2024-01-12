@@ -62,7 +62,7 @@ gdown 15nZSJ2bAT3m-iCBqP3N_9gld5_EGv4kp -O facial/arcface.pth
 
 ## Training
 
-To train the model, `vggface2` dataset is recommended. You can download it [here](https://drive.google.com/file/d/1CPSeum3HpopfomUEK1gybeuIVoeJT_Eo/view). The directory should contain multiple subdirectories, each of which contains face images with the same identity.
+To train the model, `vggface2` dataset is recommended. You can download it [here](https://drive.google.com/file/d/19pWvdEHS-CEG6tW3PdxdtZ5QEymVjImc/view). The directory should contain multiple subdirectories, each of which contains face images with the same identity.
 
 Then modify the configuration file in the `config` directory, where `dataset_path` must be correctly set as the path to your dataset. You can also modify the hyperparameters or create a new configuration file as you like, but remember to modify the `hydra` arguments in `training.py` accordingly.
 
