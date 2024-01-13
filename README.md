@@ -11,14 +11,18 @@ MetaSwap: Towards Elegant One-Shot Face Swapping Framework
     <a href="https://github.com/Ark-ike"><strong>Yi Ai</strong></a>
     <br />
 </p>
+<p align="center">
+    <a href='assets/report.pdf'> <img alt='Project Report' src='https://img.shields.io/badge/Project-Report-green?style=flat&logo=googlescholar&logoColor=green'> </a>
+    <a href="https://github.com/xxyQwQ/metaswap"> <img alt="Github Repository" src="https://img.shields.io/badge/Github-Repository-blue?logo=github&logoColor=blue"> </a>
+</p>
 
 This is a lightweight implementation of one-shot face swapping model. The framework is designed based on [faceshifter](https://arxiv.org/pdf/1912.13457.pdf) and [simswap](https://arxiv.org/pdf/2106.06340.pdf). The face swapping model mainly supports 224x224 resolution. Some results are shown as follows.
 
-![demo_1.jpg](./sample/demo_1.jpg)
+![demo_1.jpg](./assets/demo_1.jpg)
 
-![demo_2.gif](./sample/demo_2.gif)
+![demo_2.gif](./assets/demo_2.gif)
 
-## Requirements
+## 🛠️ Requirements
 
 To ensure the code runs correctly, following packages are required:
 
@@ -51,7 +55,7 @@ You can install them following the instructions below.
 
 Latest version is recommended for all the packages, but make sure that your CUDA version is compatible with your `pytorch`.
 
-## Preparation
+## ⚓ Preparation
 
 In this project, [arcface](https://github.com/TreB1eN/InsightFace_Pytorch) is required for face detection and alignment. Relevant files are already included in the `facial` directory. You should download the pretrained weights [here](https://drive.google.com/file/d/15nZSJ2bAT3m-iCBqP3N_9gld5_EGv4kp/view) and save it as `facial/arcface.pth`.
 
@@ -60,7 +64,7 @@ If you have installed `gdown`, this step can be done by running the following co
 gdown 15nZSJ2bAT3m-iCBqP3N_9gld5_EGv4kp -O facial/arcface.pth
 ```
 
-## Training
+## 🚀 Training
 
 To train the model, `vggface2` dataset is recommended. You can download it [here](https://drive.google.com/file/d/19pWvdEHS-CEG6tW3PdxdtZ5QEymVjImc/view). The directory should contain multiple subdirectories, each of which contains face images with the same identity.
 
@@ -74,7 +78,7 @@ Run the following command to train the model:
 python training.py
 ```
 
-## Inference
+## 💡 Inference
 
 We support inference on both images and videos, where videos are processed frame by frame.
 
@@ -91,16 +95,16 @@ python inference.py
 Since `hydra` allows you to override the arguments in the configuration file in the command line, you can run the following command for image inference:
 
 ```bash
-python inference.py parameter.source_path=sample/image_1.jpg parameter.target_path=sample/image_2.jpg parameter.file_type=image
+python inference.py parameter.source_path=assets/image_1.jpg parameter.target_path=assets/image_2.jpg parameter.file_type=image
 ```
 
 Similarly, you can run the following command for video inference:
 
 ```bash
-python inference.py parameter.source_path=sample/image_1.jpg parameter.target_path=sample/video_1.mp4 parameter.file_type=video
+python inference.py parameter.source_path=assets/image_1.jpg parameter.target_path=assets/video_1.mp4 parameter.file_type=video
 ```
 
-## Evaluation
+## 💯 Evaluation
 
 We apply *ID-Retrieval* and *Posture* as the evaluation metrics, which require [arcface](https://github.com/TreB1eN/InsightFace_Pytorch) and [hopenet](https://github.com/natanielruiz/deep-head-pose) respectively. Since `arcface` is already prepared in the former step, you just need to download the pretrained weights for `hopenet` [here](https://drive.google.com/file/d/1m25PrSE7g9D2q2XJVMR6IA7RaCvWSzCR/view) and save it as `facial/hopenet.pth`.
 
